@@ -1,7 +1,14 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils, CompositeDecorator, convertToRaw} from 'draft-js';
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  CompositeDecorator,
+  convertToRaw,
+} from 'draft-js';
 
-import {hashtagStrategy, HashtagSpan} from './decorators/hashtag';
+import {hashtagStrategy, HashtagSpan} from './hashtag';
+import {highlightStrategy, HighlightSpan, setHighlight} from './highlight';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -12,6 +19,10 @@ export default class App extends React.Component {
         strategy: hashtagStrategy,
         component: HashtagSpan,
       },
+      {
+        strategy: highlightStrategy,
+        component: HighlightSpan,
+      },
     ]);
 
     this.state = {editorState: EditorState.createEmpty(decorator)};
@@ -20,7 +31,6 @@ export default class App extends React.Component {
   }
 
   _handleKeyCommand(command) {
-    const {editorState} = this.state;
     const newState = RichUtils.handleKeyCommand(this.state.editorState, command);
     if (newState) {
       this.onChange(newState);
@@ -31,6 +41,11 @@ export default class App extends React.Component {
 
   _onBoldClick() {
     this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
+  }
+
+  _onHighlightClick() {
+    const newEditorState = setHighlight(this.state.editorState);
+    this.setState({editorState: newEditorState});
   }
 
   _logState() {
@@ -44,6 +59,7 @@ export default class App extends React.Component {
       <div id="content">
         <h1>Draft Editor</h1>
         <button onClick={this._onBoldClick.bind(this)}>Bold</button>
+        <button onClick={this._onHighlightClick.bind(this)}>Highlight</button>
         <div className="editor">
           <Editor
             editorState={editorState}
