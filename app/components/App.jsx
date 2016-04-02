@@ -1,5 +1,11 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
+import {EditorState, RichUtils} from 'draft-js';
+
+import Editor from 'draft-js-plugins-editor';
+import createLinkifyPlugin from 'draft-js-linkify-plugin';
+
+const linkifyPlugin = createLinkifyPlugin();
+const plugins = [linkifyPlugin];
 
 export default class App extends React.Component {
   constructor(props) {
@@ -34,6 +40,7 @@ export default class App extends React.Component {
             editorState={editorState}
             onChange={this.onChange}
             handleKeyCommand={this.handleKeyCommand}
+            plugins={plugins}
           />
         </div>
       </div>
