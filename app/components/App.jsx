@@ -1,16 +1,20 @@
 import React from 'react';
-import {EditorState, RichUtils} from 'draft-js';
+import {Editor, EditorState, RichUtils, CompositeDecorator, convertToRaw} from 'draft-js';
 
-import Editor from 'draft-js-plugins-editor';
-import createLinkifyPlugin from 'draft-js-linkify-plugin';
-
-const linkifyPlugin = createLinkifyPlugin();
-const plugins = [linkifyPlugin];
+import {hashtagStrategy, HashtagSpan} from './decorators/hashtag';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {editorState: EditorState.createEmpty()};
+
+    const decorator = new CompositeDecorator([
+      {
+        strategy: hashtagStrategy,
+        component: HashtagSpan,
+      },
+    ]);
+
+    this.state = {editorState: EditorState.createEmpty(decorator)};
     this.onChange = (editorState) => this.setState({editorState});
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
   }
@@ -29,6 +33,11 @@ export default class App extends React.Component {
     this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
   }
 
+  _logState() {
+    const content = this.state.editorState.getCurrentContent();
+    console.log(convertToRaw(content));
+  }
+
   render() {
     const {editorState} = this.state;
     return (
@@ -40,9 +49,9 @@ export default class App extends React.Component {
             editorState={editorState}
             onChange={this.onChange}
             handleKeyCommand={this.handleKeyCommand}
-            plugins={plugins}
           />
         </div>
+        <button onClick={this._logState.bind(this)}>Log State</button>
       </div>
     );
   }
