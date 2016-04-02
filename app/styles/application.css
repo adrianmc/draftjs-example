@@ -1,0 +1,9 @@
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, system, sans-serif;
+}
+
+#content {
+  width: 480px;
+  margin: 0 auto;
+}
