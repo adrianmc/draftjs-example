@@ -13,7 +13,7 @@ export default class App extends React.Component {
     return (
       <div id="content">
         <h1>Draft Editor</h1>
-        <div style={{width: '100%', border: '1px solid grey', padding: '6px'}}>
+        <div className="editor">
           <Editor editorState={editorState} onChange={this.onChange} />
         </div>
       </div>
